@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Avanzada de Estado de Ánimo y Bienestar Emocional</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        wellness: {
+                            50: '#fdfbf7',
+                            100: '#f6f1e5',
+                            200: '#ece3cb',
+                            300: '#d9cbaf',
+                            400: '#c2b08a',
+                            500: '#ab956b',
+                            600: '#927c54',
+                            700: '#776243',
+                            800: '#5e4e37',
+                            900: '#4d402e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js for trends -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.12); opacity: 1; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 4s infinite ease-in-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1ede4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c2b08a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ab956b;
+        }
+    </style>
+</head>
+<body class="bg-wellness-50 text-stone-800 font-sans min-h-full flex flex-col selection:bg-wellness-200 selection:text-wellness-900">
+
+    <!-- Header Navbar -->
+    <header class="w-full bg-white/80 backdrop-blur-md border-b border-wellness-200 sticky top-0 z-30 transition-all">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-wellness-100 flex items-center justify-center text-wellness-700 shadow-sm">
+                    <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-stone-900 tracking-tight">Equilibrio & Bienestar</h1>
+                    <p class="text-xs text-stone-500">Evaluación Emocional Integral</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="app.showHistoryModal()" class="flex items-center space-x-1.5 px-3 py-2 rounded-lg text-xs font-medium text-stone-700 bg-stone-100 hover:bg-wellness-100 transition-colors">
+                    <i data-lucide="history" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Historial</span>
+                </button>
+                <button onclick="app.resetForm()" class="flex items-center space-x-1.5 px-3 py-2 rounded-lg text-xs font-medium text-stone-700 bg-stone-100 hover:bg-wellness-100 transition-colors">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Reiniciar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8 flex flex-col justify-center">
+
+        <!-- Welcome Banner / Intro (Visible before starting or on step 0) -->
+        <div id="intro-view" class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-wellness-200 text-center fade-in">
+            <div class="inline-flex p-4 rounded-full bg-wellness-100 text-wellness-700 mb-6 shadow-inner">
+                <i data-lucide="sparkles" class="w-10 h-10"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-stone-900 mb-4">¿Cómo se siente tu mente y tu corazón hoy?</h2>
+            <p class="text-stone-600 max-w-xl mx-auto mb-8 text-sm sm:text-base leading-relaxed">
+                Tómate 3 minutos para conectar contigo. Esta evaluación avanzada analiza tus emociones, patrones de sueño, estrés y hábitos de autocuidado para ofrecerte un diagnóstico empático y herramientas personalizadas.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-left max-w-2xl mx-auto">
+                <div class="p-4 rounded-xl bg-wellness-50 border border-wellness-200/60 flex items-start space-x-3">
+                    <i data-lucide="activity" class="w-5 h-5 text-wellness-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <h4 class="text-xs font-semibold text-stone-800">Análisis Integral</h4>
+                        <p class="text-xs text-stone-500 mt-0.5">Emociones, energía y contexto físico.</p>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-wellness-50 border border-wellness-200/60 flex items-start space-x-3">
+                    <i data-lucide="compass" class="w-5 h-5 text-wellness-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <h4 class="text-xs font-semibold text-stone-800">Guía Empática</h4>
+                        <p class="text-xs text-stone-500 mt-0.5">Interpretación inteligente de tu estado.</p>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-wellness-50 border border-wellness-200/60 flex items-start space-x-3">
+                    <i data-lucide="wind" class="w-5 h-5 text-wellness-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <h4 class="text-xs font-semibold text-stone-800">Herramientas</h4>
+                        <p class="text-xs text-stone-500 mt-0.5">Respiración guiada y consejos prácticos.</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="app.startAssessment()" class="px-8 py-4 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 inline-flex items-center space-x-2">
+                <span>Comenzar Evaluación</span>
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Multi-Step Form Container (Hidden initially) -->
+        <div id="form-container" class="hidden bg-white rounded-3xl shadow-xl border border-wellness-200 overflow-hidden fade-in">
+            
+            <!-- Progress Bar Header -->
+            <div class="bg-wellness-100/60 px-6 py-4 border-b border-wellness-200 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span id="step-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-wellness-200 text-wellness-800">Paso 1 de 4</span>
+                    <span id="step-title" class="text-xs font-semibold text-stone-700 tracking-wider uppercase">Estado Emocional General</span>
+                </div>
+                <div class="w-32 bg-stone-200 rounded-full h-2 overflow-hidden">
+                    <div id="progress-bar" class="bg-wellness-600 h-full transition-all duration-300 rounded-full" style="width: 25%;"></div>
+                </div>
+            </div>
+
+            <!-- Steps Form -->
+            <form id="wellness-form" onsubmit="event.preventDefault();" class="p-6 sm:p-10">
+
+                <!-- STEP 1: Estado Emocional y Emociones Clave -->
+                <div class="form-step space-y-8" data-step="1">
+                    <div>
+                        <h3 class="text-xl font-bold text-stone-900">¿Cómo describirías tu estado emocional principal hoy?</h3>
+                        <p class="text-sm text-stone-500 mt-1">Selecciona una o más emociones que resuenen contigo en este momento.</p>
+                    </div>
+
+                    <!-- Emotion Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="emotion-grid">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <div class="border-t border-stone-100 pt-6 space-y-6">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-semibold text-stone-800">Nivel de Ánimo General</label>
+                                <span id="mood-label" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-wellness-100 text-wellness-800">Neutral / Bien (6/10)</span>
+                            </div>
+                            <input type="range" id="mood-slider" min="1" max="10" value="6" oninput="app.updateSliderLabel('mood')" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-wellness-600">
+                            <div class="flex justify-between text-xs text-stone-400 mt-1">
+                                <span>Muy bajo / Agotado</span>
+                                <span>Equilibrado</span>
+                                <span>Radiante / Excelente</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-semibold text-stone-800">Nivel de Energía Física y Mental</label>
+                                <span id="energy-label" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-wellness-100 text-wellness-800">Moderada (6/10)</span>
+                            </div>
+                            <input type="range" id="energy-slider" min="1" max="10" value="6" oninput="app.updateSliderLabel('energy')" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-wellness-600">
+                            <div class="flex justify-between text-xs text-stone-400 mt-1">
+                                <span>Sin energía</span>
+                                <span>Estable</span>
+                                <span>Vitalidad plena</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Factores de Contexto y Desencadenantes -->
+                <div class="form-step space-y-8 hidden" data-step="2">
+                    <div>
+                        <h3 class="text-xl font-bold text-stone-900">Contexto Físico y Desencadenantes Recientes</h3>
+                        <p class="text-sm text-stone-500 mt-1">Nuestra biología y entorno influyen profundamente en cómo nos sentimos.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Sleep Hours -->
+                        <div class="bg-wellness-50/50 p-5 rounded-2xl border border-wellness-200/60 space-y-3">
+                            <label class="block text-sm font-semibold text-stone-800 flex items-center space-x-2">
+                                <i data-lucide="moon" class="w-4 h-4 text-wellness-600"></i>
+                                <span>Horas de sueño anoche</span>
+                            </label>
+                            <select id="sleep-hours" class="w-full bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-wellness-500">
+                                <option value="less-4">Menos de 4 horas</option>
+                                <option value="4-6">Entre 4 y 6 horas</option>
+                                <option value="6-8" selected>Entre 6 y 8 horas (Recomendado)</option>
+                                <option value="8-plus">Más de 8 horas</option>
+                            </select>
+                        </div>
+
+                        <!-- Sleep Quality -->
+                        <div class="bg-wellness-50/50 p-5 rounded-2xl border border-wellness-200/60 space-y-3">
+                            <label class="block text-sm font-semibold text-stone-800 flex items-center space-x-2">
+                                <i data-lucide="star" class="w-4 h-4 text-wellness-600"></i>
+                                <span>Calidad del descanso</span>
+                            </label>
+                            <select id="sleep-quality" class="w-full bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-wellness-500">
+                                <option value="poor">Insomnio o despertares frecuentes</option>
+                                <option value="fair" selected>Regular (descansé a medias)</option>
+                                <option value="good">Profundo y reparador</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-semibold text-stone-800 flex items-center space-x-2">
+                                <i data-lucide="alert-circle" class="w-4 h-4 text-wellness-600"></i>
+                                <span>Nivel de Estrés Percibido</span>
+                            </label>
+                            <span id="stress-label" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800">Moderado (5/10)</span>
+                        </div>
+                        <input type="range" id="stress-slider" min="1" max="10" value="5" oninput="app.updateSliderLabel('stress')" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                        <div class="flex justify-between text-xs text-stone-400">
+                            <span>Relajación total</span>
+                            <span>Estrés manejable</span>
+                            <span>Sobrecarga / Desborde</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-sm font-semibold text-stone-800 flex items-center space-x-2">
+                            <i data-lucide="briefcase" class="w-4 h-4 text-wellness-600"></i>
+                            <span>Áreas de presión o acontecimientos recientes (Selecciona las que apliquen)</span>
+                        </label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="triggers-grid">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Diálogo Interno y Cognición -->
+                <div class="form-step space-y-8 hidden" data-step="3">
+                    <div>
+                        <h3 class="text-xl font-bold text-stone-900">Diálogo Interno y Patrones de Pensamiento</h3>
+                        <p class="text-sm text-stone-500 mt-1">¿Qué tipo de pensamientos han predominado en tu mente recientemente?</p>
+                    </div>
+
+                    <div class="space-y-4" id="cognition-options">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- STEP 4: Autocuidado y Recursos Actuales -->
+                <div class="form-step space-y-8 hidden" data-step="4">
+                    <div>
+                        <h3 class="text-xl font-bold text-stone-900">Prácticas de Autocuidado y Hábitos</h3>
+                        <p class="text-sm text-stone-500 mt-1">¿Qué acciones conscientes has realizado hoy o realizas habitualmente para nutrirte?</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="selfcare-grid">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <label class="block text-sm font-semibold text-stone-800">Nota personal o reflexión breve (Opcional)</label>
+                        <textarea id="user-journal-note" rows="3" placeholder="Escribe aquí si hay algo específico que quieras expresar o desahogar..." class="w-full bg-wellness-50/50 border border-stone-200 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-wellness-500 resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Form Navigation Buttons -->
+                <div class="flex items-center justify-between pt-8 mt-8 border-t border-stone-100">
+                    <button type="button" id="prev-btn" onclick="app.prevStep()" class="hidden px-5 py-2.5 rounded-xl border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors flex items-center space-x-2 text-sm">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Anterior</span>
+                    </button>
+                    <div class="ml-auto">
+                        <button type="button" id="next-btn" onclick="app.nextStep()" class="px-6 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold shadow-md transition-all flex items-center space-x-2 text-sm">
+                            <span>Siguiente</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Results Dashboard View (Hidden initially) -->
+        <div id="results-view" class="hidden space-y-8 fade-in">
+            
+            <!-- Top Score & Summary Card -->
+            <div class="bg-white rounded-3xl p-8 shadow-xl border border-wellness-200 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <!-- Circular Gauge -->
+                <div class="flex flex-col items-center justify-center text-center p-6 bg-wellness-50 rounded-2xl border border-wellness-200/60">
+                    <div class="relative w-36 h-36 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <path class="text-stone-200" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path id="gauge-circle" class="text-wellness-600 transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="absolute flex flex-col items-center justify-center">
+                            <span id="score-number" class="text-3xl font-black text-stone-900">0</span>
+                            <span class="text-xs text-stone-500 font-medium">/ 100 Pts</span>
+                        </div>
+                    </div>
+                    <h4 id="score-title" class="mt-4 font-bold text-stone-800 text-base">Calculando...</h4>
+                </div>
+
+                <!-- Empathetic Diagnostic Interpretation -->
+                <div class="md:col-span-2 space-y-4">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-wellness-100 text-wellness-800 text-xs font-bold">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span id="diagnostic-badge">Diagnóstico Empático</span>
+                    </div>
+                    <h3 id="diagnostic-headline" class="text-xl sm:text-2xl font-bold text-stone-900">Tu panorama emocional de hoy</h3>
+                    <p id="diagnostic-description" class="text-sm sm:text-base text-stone-600 leading-relaxed">
+                        Analizando tus respuestas para brindarte una perspectiva cálida y constructiva...
+                    </p>
+                    <div id="selected-emotions-summary" class="flex flex-wrap gap-2 pt-2">
+                        <!-- Populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dimensions Breakdown & Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Breakdown Bars -->
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-wellness-200 space-y-5">
+                    <h4 class="font-bold text-stone-900 flex items-center space-x-2">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5 text-wellness-600"></i>
+                        <span>Desglose por Dimensiones</span>
+                    </h4>
+                    <div class="space-y-4" id="dimensions-breakdown">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Interactive Breathing Exercise Widget -->
+                <div class="bg-gradient-to-br from-wellness-800 to-wellness-900 text-white rounded-3xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-15">
+                        <i data-lucide="wind" class="w-48 h-48"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="px-2.5 py-1 rounded-full bg-white/10 text-wellness-200 text-xs font-semibold">Herramienta Anti-Estrés</span>
+                            <span id="breathing-state-text" class="text-xs text-wellness-200 font-medium">Pulsa Iniciar</span>
+                        </div>
+                        <h4 class="font-bold text-lg">Respiración Guiada 4-7-8</h4>
+                        <p class="text-xs text-wellness-100/80 mt-1">Ideal para calmar el sistema nervioso en momentos de sobrecarga.</p>
+                    </div>
+
+                    <!-- Breathing Circle Animation Area -->
+                    <div class="relative z-10 flex flex-col items-center justify-center my-6">
+                        <div id=" breathing-circle" class="w-32 h-32 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center transition-all duration-1000 shadow-lg">
+                            <span id="breathing-instruction" class="text-xs font-bold uppercase tracking-wider text-white">Listo</span>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 flex items-center justify-center space-x-3">
+                        <button onclick="app.toggleBreathing()" id="breath-toggle-btn" class="px-5 py-2.5 rounded-xl bg-white text-wellness-900 font-bold text-xs shadow-lg hover:bg-wellness-100 transition-colors">
+                            Comenzar Ejercicio
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actionable Tailored Recommendations -->
+            <div class="bg-white rounded-3xl p-8 shadow-xl border border-wellness-200 space-y-6">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 rounded-xl bg-wellness-100 text-wellness-700">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg text-stone-900">Recomendaciones Prácticas y Accionables</h4>
+                        <p class="text-xs text-stone-500">Diseñadas a medida según tu puntuación y factores actuales</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="recommendations-container">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Gratitude Note Generator or Restart -->
+            <div class="bg-wellness-100/70 border border-wellness-200 rounded-3xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="space-y-1 text-center sm:text-left">
+                    <h4 class="font-bold text-stone-900 text-base">¿Te ha gustado este registro?</h4>
+                    <p class="text-xs text-stone-600">Guarda tu evolución en tu dispositivo y consulta tu historial diario.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="app.saveResultToHistory()" id="save-btn" class="px-5 py-3 rounded-xl bg-wellness-700 hover:bg-wellness-800 text-white font-semibold text-xs shadow-md transition-all flex items-center space-x-2">
+                        <i data-lucide="bookmark" class="w-4 h-4"></i>
+                        <span>Guardar en Historial</span>
+                    </button>
+                    <button onclick="app.resetForm()" class="px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs shadow-md transition-all flex items-center space-x-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Nueva Evaluación</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-wellness-200 space-y-6 fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-4">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="history" class="w-5 h-5 text-wellness-700"></i>
+                    <h3 class="font-bold text-stone-900 text-lg">Historial de Bienestar</h3>
+                </div>
+                <button onclick="app.closeHistoryModal()" class="p-2 rounded-full hover:bg-stone-100 text-stone-500">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="relative w-full h-48 bg-wellness-50 rounded-2xl p-4 border border-wellness-200/60">
+                <canvas id="history-chart"></canvas>
+            </div>
+
+            <!-- List of past records -->
+            <div class="space-y-3" id="history-list">
+                <!-- Populated via JS -->
+            </div>
+
+            <div class="flex justify-between items-center pt-2">
+                <button onclick="app.clearHistory()" class="text-xs text-rose-600 hover:underline font-medium">Borrar historial</button>
+                <button onclick="app.closeHistoryModal()" class="px-4 py-2 rounded-xl bg-stone-900 text-white text-xs font-semibold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-stone-900 text-white px-5 py-3 rounded-2xl shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 z-50 text-xs font-medium flex items-center space-x-2">
+        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toast-msg">Mensaje de notificación</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-xs text-stone-400 border-t border-wellness-200/60 mt-12">
+        <p>Herramienta de autoconocimiento y bienestar emocional. No sustituye la consulta psicológica profesional.</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data banks for the evaluation
+        const EMOTIONS_DATA = [
+            { id: 'calm', label: 'Calma / Paz', emoji: '🌿', color: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
+            { id: 'joy', label: 'Alegría / Entusiasmo', emoji: '✨', color: 'bg-amber-50 border-amber-200 text-amber-800' },
+            { id: 'gratitude', label: 'Gratitud', emoji: '🤲', color: 'bg-teal-50 border-teal-200 text-teal-800' },
+            { id: 'hope', label: 'Esperanza', emoji: '🌱', color: 'bg-lime-50 border-lime-200 text-lime-800' },
+            { id: 'tired', label: 'Fatiga / Cansancio', emoji: '🔋', color: 'bg-stone-100 border-stone-300 text-stone-700' },
+            { id: 'anxious', label: 'Ansiedad / Inquietud', emoji: '🌊', color: 'bg-sky-50 border-sky-200 text-sky-800' },
+            { id: 'sad', label: 'Tristeza / Melancolía', emoji: '🌧️', color: 'bg-indigo-50 border-indigo-200 text-indigo-800' },
+            { id: 'overwhelmed', label: 'Sobrecarga', emoji: '🌪️', color: 'bg-orange-50 border-orange-200 text-orange-800' },
+        ];
+
+        const TRIGGERS_DATA = [
+            { id: 'work', label: 'Trabajo / Estudios' },
+            { id: 'relationships', label: 'Relaciones / Familia' },
+            { id: 'health', label: 'Salud física / Dolor' },
+            { id: 'finances', label: 'Economía / Finanzas' },
+            { id: 'uncertainty', label: 'Incertidumbre futura' },
+            { id: 'none', label: 'Ninguno relevante hoy' },
+        ];
+
+        const COGNITION_DATA = [
+            { id: 'optimism', label: 'Optimismo y confianza en que todo saldrá bien', weight: 10, category: 'positive' },
+            { id: 'gratitude-focus', label: 'Enfoque en lo positivo y pequeñas cosas buenas', weight: 10, category: 'positive' },
+            { id: 'rumination', label: 'Rumiación: darle vueltas continuas al pasado o errores', weight: 3, category: 'stress' },
+            { id: 'future-anxiety', label: 'Ansiedad anticipatoria por el futuro o pendientes', weight: 3, category: 'stress' },
+            { id: 'self-criticism', label: 'Autoexigencia elevada o crítica interna severa', weight: 4, category: 'stress' },
+            { id: 'neutral', label: 'Mente despejada, neutral o en pausa', weight: 8, category: 'neutral' },
+        ];
+
+        const SELFCARE_DATA = [
+            { id: 'meditation', label: 'Meditación o respiración consciente', icon: 'wind' },
+            { id: 'nature', label: 'Contacto con la naturaleza o aire libre', icon: 'sun' },
+            { id: 'social', label: 'Conversación nutritiva con ser querido', icon: 'users' },
+            { id: 'movement', label: 'Actividad física, yoga o caminata', icon: 'activity' },
+            { id: 'hobby', label: 'Tiempo para hobby o lectura', icon: 'book-open' },
+            { id: 'digital-detox', label: 'Pausa de pantallas / Redes sociales', icon: 'smartphone-off' },
+        ];
+
+        class WellnessApp {
+            constructor() {
+                this.currentStep = 1;
+                this.totalSteps = 4;
+                this.formData = {
+                    emotions: [],
+                    mood: 6,
+                    energy: 6,
+                    sleepHours: '6-8',
+                    sleepQuality: 'fair',
+                    stress: 5,
+                    triggers: [],
+                    cognition: [],
+                    selfcare: [],
+                    journalNote: ''
+                };
+                this.breathingInterval = null;
+                this.isBreathingActive = false;
+                this.chartInstance = null;
+                this.historyChartInstance = null;
+                
+                this.initUI();
+            }
+
+            initUI() {
+                // Populate emotion grid
+                const emotionGrid = document.getElementById('emotion-grid');
+                emotionGrid.innerHTML = EMOTIONS_DATA.map(e => `
+                    <button type="button" onclick="app.toggleSelection('emotions', '${e.id}', this)" data-id="${e.id}" class="p-4 rounded-2xl border ${e.color} flex flex-col items-center justify-center space-y-2 transition-all hover:scale-102 shadow-sm text-center font-medium text-xs">
+                        <span class="text-2xl">${e.emoji}</span>
+                        <span>${e.label}</span>
+                    </button>
+                `).join('');
+
+                // Populate triggers grid
+                const triggersGrid = document.getElementById('triggers-grid');
+                triggersGrid.innerHTML = TRIGGERS_DATA.map(t => `
+                    <button type="button" onclick="app.toggleSelection('triggers', '${t.id}', this)" data-id="${t.id}" class="p-3 rounded-xl border border-stone-200 bg-white text-stone-700 text-xs font-medium hover:border-wellness-400 hover:bg-wellness-50/50 transition-all text-left flex items-center space-x-2">
+                        <div class="w-3.5 h-3.5 rounded-full border border-stone-300 flex items-center justify-center checkbox-indicator"></div>
+                        <span>${t.label}</span>
+                    </button>
+                `).join('');
+
+                // Populate cognition options
+                const cognitionContainer = document.getElementById('cognition-options');
+                cognitionContainer.innerHTML = COGNITION_DATA.map(c => `
+                    <label class="flex items-start space-x-3 p-4 rounded-2xl border border-stone-200 bg-white hover:border-wellness-400 hover:bg-wellness-50/50 transition-all cursor-pointer">
+                        <input type="checkbox" name="cognition" value="${c.id}" onchange="app.updateCognitionSelection()" class="mt-1 w-4 h-4 text-wellness-600 rounded border-stone-300 focus:ring-wellness-500">
+                        <span class="text-xs sm:text-sm text-stone-700 font-medium">${c.label}</span>
+                    </label>
+                `).join('');
+
+                // Populate selfcare grid
+                const selfcareGrid = document.getElementById('selfcare-grid');
+                selfcareGrid.innerHTML = SELFCARE_DATA.map(s => `
+                    <button type="button" onclick="app.toggleSelection('selfcare', '${s.id}', this)" data-id="${s.id}" class="p-4 rounded-2xl border border-stone-200 bg-white text-stone-700 text-xs font-semibold hover:border-wellness-400 hover:bg-wellness-50/50 transition-all text-left flex items-center space-x-3">
+                        <div class="p-2 rounded-xl bg-wellness-100 text-wellness-700">
+                            <i data-lucide="${s.icon}" class="w-4 h-4"></i>
+                        </div>
+                        <span class="flex-grow">${s.label}</span>
+                        <div class="w-4 h-4 rounded-full border border-stone-300 flex items-center justify-center checkbox-indicator"></div>
+                    </button>
+                `).join('');
+
+                lucide.createIcons();
+            }
+
+            startAssessment() {
+                document.getElementById('intro-view').classList.add('hidden');
+                document.getElementById('form-container').classList.remove('hidden');
+                this.updateStepView();
+            }
+
+            updateSliderLabel(type) {
+                const val = document.getElementById(`${type}-slider`).value;
+                this.formData[type] = parseInt(val);
+                const labelElem = document.getElementById(`${type}-label`);
+
+                if (type === 'mood') {
+                    let text = 'Neutral / Bien';
+                    if (val <= 3) text = 'Bajo / Agotado';
+                    else if (val >= 8) text = 'Muy Positivo';
+                    labelElem.textContent = `${text} (${val}/10)`;
+                } else if (type === 'energy') {
+                    let text = 'Moderada';
+                    if (val <= 3) text = 'Muy Baja';
+                    else if (val >= 8) text = 'Alta Vitalidad';
+                    labelElem.textContent = `${text} (${val}/10)`;
+                } else if (type === 'stress') {
+                    let text = 'Moderado';
+                    if (val <= 3) text = 'Bajo Estrés';
+                    else if (val >= 8) text = 'Alto / Sobrecarga';
+                    labelElem.textContent = `${text} (${val}/10)`;
+                }
+            }
+
+            toggleSelection(category, id, elem) {
+                const list = this.formData[category];
+                const index = list.indexOf(id);
+
+                if (index > -1) {
+                    list.splice(index, 1);
+                    elem.classList.remove('ring-2', 'ring-wellness-600', 'bg-wellness-100/50', 'border-wellness-500');
+                    const indicator = elem.querySelector('.checkbox-indicator');
+                    if (indicator) indicator.classList.remove('bg-wellness-600', 'border-wellness-600');
+                } else {
+                    list.push(id);
+                    elem.classList.add('ring-2', 'ring-wellness-600', 'bg-wellness-100/50', 'border-wellness-500');
+                    const indicator = elem.querySelector('.checkbox-indicator');
+                    if (indicator) indicator.classList.add('bg-wellness-600', 'border-wellness-600');
+                }
+            }
+
+            updateCognitionSelection() {
+                const checkboxes = document.querySelectorAll('input[name="cognition"]:checked');
+                this.formData.cognition = Array.from(checkboxes).map(cb => cb.value);
+            }
+
+            nextStep() {
+                if (this.currentStep < this.totalSteps) {
+                    this.currentStep++;
+                    this.updateStepView();
+                } else {
+                    this.finishAssessment();
+                }
+            }
+
+            prevStep() {
+                if (this.currentStep > 1) {
+                    this.currentStep--;
+                    this.updateStepView();
+                }
+            }
+
+            updateStepView() {
+                // Hide all steps
+                document.querySelectorAll('.form-step').forEach(step => step.classList.add('hidden'));
+                // Show current step
+                document.querySelector(`.form-step[data-step="${this.currentStep}"]`).classList.remove('hidden');
+
+                // Update Progress bar & header
+                const pct = (this.currentStep / this.totalSteps) * 100;
+                document.getElementById('progress-bar').style.width = `${pct}%`;
+                document.getElementById('step-badge').textContent = `Paso ${this.currentStep} de ${this.totalSteps}`;
+
+                const titles = [
+                    "Estado Emocional General",
+                    "Contexto Físico y Estrés",
+                    "Diálogo Interno y Cognición",
+                    "Prácticas de Autocuidado"
+                ];
+                document.getElementById('step-title').textContent = titles[this.currentStep - 1];
+
+                // Update buttons
+                const prevBtn = document.getElementById('prev-btn');
+                const nextBtn = document.getElementById('next-btn');
+
+                if (this.currentStep === 1) {
+                    prevBtn.classList.add('hidden');
+                } else {
+                    prevBtn.classList.remove('hidden');
+                }
+
+                if (this.currentStep === this.totalSteps) {
+                    nextBtn.innerHTML = `<span>Ver Resultados y Diagnóstico</span> <i data-lucide="sparkles" class="w-4 h-4"></i>`;
+                } else {
+                    nextBtn.innerHTML = `<span>Siguiente</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+                }
+
+                lucide.createIcons();
+                window.scrollTo({ top: 100, behavior: 'smooth' });
+            }
+
+            finishAssessment() {
+                // Gather final form values
+                this.formData.sleepHours = document.getElementById('sleep-hours').value;
+                this.formData.sleepQuality = document.getElementById('sleep-quality').value;
+                this.formData.journalNote = document.getElementById('user-journal-note').value;
+
+                // Hide form, show results
+                document.getElementById('form-container').classList.add('hidden');
+                document.getElementById('results-view').classList.remove('hidden');
+
+                this.calculateResults();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            calculateResults() {
+                // Calculate Overall Score (0-100)
+                let moodScore = (this.formData.mood / 10) * 35;
+                let energyScore = (this.formData.energy / 10) * 25;
+                let stressScore = ((11 - this.formData.stress) / 10) * 25; // Lower stress = higher score
+
+                // Sleep bonus/penalty
+                let sleepBonus = 15;
+                if (this.formData.sleepHours === 'less-4') sleepBonus = 2;
+                else if (this.formData.sleepHours === '4-6') sleepBonus = 8;
+                else if (this.formData.sleepQuality === 'poor') sleepBonus -= 5;
+
+                let totalScore = Math.round(moodScore + energyScore + stressScore + sleepBonus);
+                totalScore = Math.min(100, Math.max(10, totalScore));
+
+                // Animate gauge
+                setTimeout(() => {
+                    document.getElementById('gauge-circle').setAttribute('stroke-dasharray', `${totalScore}, 100`);
+                    document.getElementById('score-number').textContent = totalScore;
+                }, 200);
+
+                // Set Score Title & Diagnostic
+                let diagnosticTitle = "";
+                let diagnosticDesc = "";
+                let scoreTitleElem = document.getElementById('score-title');
+
+                if (totalScore >= 75) {
+                    scoreTitleElem.textContent = "Excelente Bienestar";
+                    diagnosticTitle = "¡Tu equilibrio emocional es sólido y radiante!";
+                    diagnosticDesc = "Tus niveles de energía y ánimo se encuentran en un punto muy favorable. Estás canalizando adecuadamente tus recursos y tu diálogo interno es constructivo. Es un momento excelente para consolidar tus hábitos positivos y disfrutar de tu vitalidad.";
+                } else if (totalScore >= 50) {
+                    scoreTitleElem.textContent = "Bienestar Moderado / Estable";
+                    diagnosticTitle = "Te encuentras en un estado de equilibrio sostenido con áreas de atención";
+                    diagnosticDesc = "Tienes bases estables, aunque es posible que notes cierta fatiga o tensión acumulada debido a las exigencias recientes. Tu mente está procesando estímulos cotidianos; regalarte pequeñas pausas y cuidar tu descanso potenciará notablemente tu energía.";
+                } else {
+                    scoreTitleElem.textContent = "Fatiga o Sobrecarga Emocional";
+                    diagnosticTitle = "Se detecta un nivel importante de desgaste o estrés acumulado";
+                    diagnosticDesc = "Tus respuestas reflejan que tu sistema nervioso y emocional están soportando una carga considerable. Es completamente válido sentirse así. Hoy la prioridad es la autocompasión, simplificar pendientes y priorizar un descanso profundo.";
+                }
+
+                document.getElementById('diagnostic-headline').textContent = diagnosticTitle;
+                document.getElementById('diagnostic-description').textContent = diagnosticDesc;
+
+                // Render selected emotions badges
+                const emotionsContainer = document.getElementById('selected-emotions-summary');
+                if (this.formData.emotions.length > 0) {
+                    emotionsContainer.innerHTML = this.formData.emotions.map(id => {
+                        const em = EMOTIONS_DATA.find(e => e.id === id);
+                        return em ? `<span class="px-3 py-1 rounded-full bg-wellness-100 text-wellness-800 text-xs font-semibold flex items-center space-x-1"><span>${em.emoji}</span><span>${em.label}</span></span>` : '';
+                    }).join('');
+                } else {
+                    emotionsContainer.innerHTML = `<span class="text-xs text-stone-400 italic">No seleccionaste emociones específicas.</span>`;
+                }
+
+                // Render Dimension Breakdown Bars
+                const dimContainer = document.getElementById('dimensions-breakdown');
+                const moodDim = Math.round((this.formData.mood / 10) * 100);
+                const energyDim = Math.round((this.formData.energy / 10) * 100);
+                const stressDim = Math.round(((11 - this.formData.stress) / 10) * 100);
+                const selfcareDim = Math.min(100, Math.max(20, this.formData.selfcare.length * 25));
+
+                dimContainer.innerHTML = `
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-stone-700">Estado de Ánimo</span>
+                            <span class="text-stone-900">${moodDim}%</span>
+                        </div>
+                        <div class="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-wellness-600 h-full rounded-full transition-all duration-1000" style="width: ${moodDim}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-stone-700">Nivel de Energía</span>
+                            <span class="text-stone-900">${energyDim}%</span>
+                        </div>
+                        <div class="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full transition-all duration-1000" style="width: ${energyDim}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-stone-700">Gestión de Estrés (Calma)</span>
+                            <span class="text-stone-900">${stressDim}%</span>
+                        </div>
+                        <div class="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-teal-600 h-full rounded-full transition-all duration-1000" style="width: ${stressDim}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-stone-700">Hábitos de Autocuidado</span>
+                            <span class="text-stone-900">${selfcareDim}%</span>
+                        </div>
+                        <div class="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-indigo-500 h-full rounded-full transition-all duration-1000" style="width: ${selfcareDim}%"></div>
+                        </div>
+                    </div>
+                `;
+
+                // Render Tailored Recommendations
+                this.renderRecommendations(totalScore);
+                lucide.createIcons();
+            }
+
+            renderRecommendations(score) {
+                const recContainer = document.getElementById('recommendations-container');
+                let recs = [];
+
+                if (score < 50 || this.formData.stress >= 7) {
+                    recs.push({
+                        title: "Pausa Consciente & Respiración",
+                        desc: "Utiliza el widget de respiración 4-7-8 de esta pantalla 3 veces al día para apagar la respuesta de alerta.",
+                        icon: "wind"
+                    });
+                    recs.push({
+                        title: "Higiene de Sueño Prioritaria",
+                        desc: "Apaga pantallas 45 minutos antes de dormir y prioriza un entorno fresco y oscuro para recuperar energía celular.",
+                        icon: "moon"
+                    });
+                    recs.push({
+                        title: "Simplificar la Carga",
+                        desc: "Identifica una sola tarea no urgente hoy y delégala o elimínala de tu lista. Reduce la autoexigencia.",
+                        icon: "check-circle"
+                    });
+                } else if (score < 75) {
+                    recs.push({
+                        title: "Paseo al Aire Libre",
+                        desc: "Una caminata de 15 minutos sin móvil estimula la serotonina y despeja la rumiación mental.",
+                        icon: "sun"
+                    });
+                    recs.push({
+                        title: "Diálogo Interno Compasivo",
+                        desc: "Escribe en un papel qué te dirías si un amigo estuviera pasando por tu misma situación exacta.",
+                        icon: "heart"
+                    });
+                    recs.push({
+                        title: "Conexión Nutritiva",
+                        desc: "Comparte 10 minutos de charla relajada o un café con alguien que te aporte tranquilidad.",
+                        icon: "users"
+                    });
+                } else {
+                    recs.push({
+                        title: "Cultivar la Gratitud Activa",
+                        desc: "Anota tres pequeños detalles que hayas disfrutado hoy para fijar el bienestar en tu memoria a largo plazo.",
+                        icon: "sparkles"
+                    });
+                    recs.push({
+                        title: "Mantener el Ritmo Físico",
+                        desc: "Continúa con tus prácticas de movimiento o estiramientos que tan buen resultado te están dando.",
+                        icon: "activity"
+                    });
+                    recs.push({
+                        title: "Compartir tu Energía",
+                        desc: "Tu estabilidad actual es un recurso hermoso; ofrece una palabra de aliento a alguien de tu entorno.",
+                        icon: "smile"
+                    });
+                }
+
+                recContainer.innerHTML = recs.map(r => `
+                    <div class="p-5 rounded-2xl bg-wellness-50/70 border border-wellness-200/60 flex flex-col justify-between space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 rounded-xl bg-white text-wellness-700 shadow-sm">
+                                <i data-lucide="${r.icon}" class="w-5 h-5"></i>
+                            </div>
+                            <h5 class="font-bold text-stone-900 text-sm">${r.title}</h5>
+                        </div>
+                        <p class="text-xs text-stone-600 leading-relaxed">${r.desc}</p>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            }
+
+            // Interactive Breathing Exercise Method
+            toggleBreathing() {
+                const btn = document.getElementById('breath-toggle-btn');
+                const circle = document.getElementById('breathing-circle');
+                const instruction = document.getElementById('breathing-instruction');
+                const stateText = document.getElementById('breathing-state-text');
+
+                if (this.isBreathingActive) {
+                    clearInterval(this.breathingInterval);
+                    this.isBreathingActive = false;
+                    btn.textContent = "Comenzar Ejercicio";
+                    circle.style.transform = "scale(1)";
+                    instruction.textContent = "Listo";
+                    stateText.textContent = "Pausado";
+                    return;
+                }
+
+                this.isBreathingActive = true;
+                btn.textContent = "Detener";
+                stateText.textContent = "En curso";
+
+                let phase = 0; // 0: Inhala (4s), 1: Retén (7s), 2: Exhala (8s)
+                const runCycle = () => {
+                    if (!this.isBreathingActive) return;
+
+                    if (phase === 0) {
+                        instruction.textContent = "Inhala (4s)";
+                        circle.style.transform = "scale(1.35)";
+                        circle.style.transition = "transform 4s ease-in-out";
+                        phase = 1;
+                        this.breathingInterval = setTimeout(runCycle, 4000);
+                    } else if (phase === 1) {
+                        instruction.textContent = "Retén (7s)";
+                        circle.style.transition = "transform 7s linear";
+                        phase = 2;
+                        this.breathingInterval = setTimeout(runCycle, 7000);
+                    } else if (phase === 2) {
+                        instruction.textContent = "Exhala (8s)";
+                        circle.style.transform = "scale(1)";
+                        circle.style.transition = "transform 8s ease-in-out";
+                        phase = 0;
+                        this.breathingInterval = setTimeout(runCycle, 8000);
+                    }
+                };
+
+                runCycle();
+            }
+
+            // LocalStorage History Management
+            saveResultToHistory() {
+                const history = JSON.parse(localStorage.getItem('wellness_history') || '[]');
+                const newEntry = {
+                    date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+                    score: parseInt(document.getElementById('score-number').textContent),
+                    mood: this.formData.mood,
+                    energy: this.formData.energy,
+                    stress: this.formData.stress
+                };
+
+                history.push(newEntry);
+                localStorage.setItem('wellness_history', JSON.stringify(history));
+
+                const saveBtn = document.getElementById('save-btn');
+                saveBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> <span>¡Guardado!</span>`;
+                saveBtn.classList.remove('bg-wellness-700', 'hover:bg-wellness-800');
+                saveBtn.classList.add('bg-emerald-700');
+                saveBtn.disabled = true;
+
+                this.showToast("Resultado guardado con éxito en tu historial local.");
+                lucide.createIcons();
+            }
+
+            showHistoryModal() {
+                const modal = document.getElementById('history-modal');
+                modal.classList.remove('hidden');
+
+                const history = JSON.parse(localStorage.getItem('wellness_history') || '[]');
+                const listElem = document.getElementById('history-list');
+
+                if (history.length === 0) {
+                    listElem.innerHTML = `<p class="text-xs text-stone-400 text-center py-6">Aún no hay registros guardados en este dispositivo.</p>`;
+                } else {
+                    listElem.innerHTML = history.slice(-5).reverse().map(h => `
+                        <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center justify-between text-xs">
+                            <div>
+                                <span class="font-bold text-stone-800">${h.date}</span>
+                                <div class="text-stone-500 mt-0.5">Ánimo: ${h.mood}/10 • Estrés: ${h.stress}/10</div>
+                            </div>
+                            <div class="px-3 py-1 rounded-full bg-wellness-100 text-wellness-900 font-bold">
+                                ${h.score} pts
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Render Chart
+                const ctx = document.getElementById('history-chart').getContext('2d');
+                if (this.historyChartInstance) {
+                    this.historyChartInstance.destroy();
+                }
+
+                const labels = history.map(h => h.date);
+                const scores = history.map(h => h.score);
+
+                this.historyChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels.length ? labels : ['Sin datos'],
+                        datasets: [{
+                            label: 'Puntuación Bienestar',
+                            data: scores.length ? scores : [0],
+                            borderColor: '#927c54',
+                            backgroundColor: 'rgba(146, 124, 84, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { min: 0, max: 100, ticks: { font: { size: 10 } } },
+                            x: { ticks: { font: { size: 10 } } }
+                        }
+                    }
+                });
+
+                lucide.createIcons();
+            }
+
+            closeHistoryModal() {
+                document.getElementById('history-modal').classList.add('hidden');
+            }
+
+            clearHistory() {
+                localStorage.removeItem('wellness_history');
+                this.showHistoryModal();
+                this.showToast("Historial borrado.");
+            }
+
+            showToast(msg) {
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-msg').textContent = msg;
+                toast.classList.remove('translate-y-24', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-24', 'opacity-0');
+                }, 3000);
+            }
+
+            resetForm() {
+                this.currentStep = 1;
+                this.formData = {
+                    emotions: [],
+                    mood: 6,
+                    energy: 6,
+                    sleepHours: '6-8',
+                    sleepQuality: 'fair',
+                    stress: 5,
+                    triggers: [],
+                    cognition: [],
+                    selfcare: [],
+                    journalNote: ''
+                };
+
+                // Reset UI elements
+                document.getElementById('results-view').classList.add('hidden');
+                document.getElementById('form-container').classList.add('hidden');
+                document.getElementById('intro-view').classList.remove('hidden');
+
+                // Reset sliders
+                document.getElementById('mood-slider').value = 6;
+                document.getElementById('energy-slider').value = 6;
+                document.getElementById('stress-slider').value = 5;
+                this.updateSliderLabel('mood');
+                this.updateSliderLabel('energy');
+                this.updateSliderLabel('stress');
+
+                // Clear highlights
+                document.querySelectorAll('#emotion-grid button, #triggers-grid button, #selfcare-grid button').forEach(b => {
+                    b.classList.remove('ring-2', 'ring-wellness-600', 'bg-wellness-100/50', 'border-wellness-500');
+                    const indicator = b.querySelector('.checkbox-indicator');
+                    if (indicator) indicator.classList.remove('bg-wellness-600', 'border-wellness-600');
+                });
+
+                document.querySelectorAll('input[name="cognition"]').forEach(cb => cb.checked = false);
+                document.getElementById('user-journal-note').value = '';
+
+                // Reset save button state
+                const saveBtn = document.getElementById('save-btn');
+                if (saveBtn) {
+                    saveBtn.innerHTML = `<i data-lucide="bookmark" class="w-4 h-4"></i> <span>Guardar en Historial</span>`;
+                    saveBtn.classList.remove('bg-emerald-700');
+                    saveBtn.classList.add('bg-wellness-700', 'hover:bg-wellness-800');
+                    saveBtn.disabled = false;
+                }
+
+                if (this.breathingInterval) {
+                    clearInterval(this.breathingInterval);
+                    this.isBreathingActive = false;
+                }
+
+                lucide.createIcons();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Initialize application instance
+        const app = new WellnessApp();
+    </script>
+</body>
+</html>
